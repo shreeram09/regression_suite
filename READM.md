@@ -19,6 +19,10 @@
 ```cmd
 newman run path-to-collection.js
 ```
+- regression test with data
+```cmd
+newman run path-to-collection.js -d path-to-data.csv
+```
 - newman reports generation
 ```cmd
 newman run path-to-collection.js --reports cli,htmlextra path-to-reports
