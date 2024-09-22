@@ -7,7 +7,7 @@
 	},
 	"item": [
 		{
-			"name": "API status",
+			"name": "API Status",
 			"event": [
 				{
 					"listen": "test",
@@ -24,7 +24,7 @@
 							"pm.expect(response.status).eql(\"OK\");\r",
 							"});\r",
 							"\r",
-							"pm.execution.setNextRequest(\"List of books\");"
+							"pm.execution.setNextRequest(\"List Books\");"
 						],
 						"type": "text/javascript",
 						"packages": {}
@@ -97,7 +97,7 @@
 			"response": []
 		},
 		{
-			"name": "List of books",
+			"name": "List Books",
 			"event": [
 				{
 					"listen": "test",
@@ -152,110 +152,7 @@
 			"response": []
 		},
 		{
-			"name": "List of orders",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 200\", function () {\r",
-							"    pm.response.to.have.status(200);\r",
-							"});"
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				}
-			],
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "{{auth}}",
-							"type": "string"
-						}
-					]
-				},
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{baseUrl}}/orders?limit=20&type=fiction",
-					"host": [
-						"{{baseUrl}}"
-					],
-					"path": [
-						"orders"
-					],
-					"query": [
-						{
-							"key": "limit",
-							"value": "20"
-						},
-						{
-							"key": "type",
-							"value": "fiction"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Order book",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 201\", function () {\r",
-							"    pm.response.to.have.status(201);\r",
-							"});\r",
-							"const response=pm.response.json();\r",
-							"pm.globals.set(\"orderId\", response.orderId);"
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				}
-			],
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "{{auth}}",
-							"type": "string"
-						}
-					]
-				},
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"bookId\":{{bookId}},\r\n    \"customerName\":\"{{$randomFullName}}\"\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{baseUrl}}/orders",
-					"host": [
-						"{{baseUrl}}"
-					],
-					"path": [
-						"orders"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "single book",
+			"name": "Book Details",
 			"event": [
 				{
 					"listen": "test",
@@ -309,7 +206,7 @@
 			"response": []
 		},
 		{
-			"name": "single order",
+			"name": "List Orders",
 			"event": [
 				{
 					"listen": "test",
@@ -317,7 +214,118 @@
 						"exec": [
 							"pm.test(\"Status code is 200\", function () {\r",
 							"    pm.response.to.have.status(200);\r",
-							"});"
+							"});\r",
+							"\r",
+							"pm.execution.setNextRequest(\"Create Order\");"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{auth}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/orders?limit=20&type=fiction",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders"
+					],
+					"query": [
+						{
+							"key": "limit",
+							"value": "20"
+						},
+						{
+							"key": "type",
+							"value": "fiction"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Order",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"const response=pm.response.json();\r",
+							"pm.globals.set(\"orderId\", response.orderId);\r",
+							"\r",
+							"//forward orderId to order details api\r",
+							"\r",
+							"pm.execution.setNextRequest(\"Order Details\");"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{auth}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"bookId\":{{bookId}},\r\n    \"customerName\":\"{{customerName}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/orders",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Order Details",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.execution.setNextRequest(\"Update Order\");"
 						],
 						"type": "text/javascript",
 						"packages": {}
@@ -357,7 +365,7 @@
 			"response": []
 		},
 		{
-			"name": "Update order",
+			"name": "Update Order",
 			"event": [
 				{
 					"listen": "test",
@@ -365,7 +373,11 @@
 						"exec": [
 							"pm.test(\"Status code is 203\", function () {\r",
 							"    pm.response.to.have.status(204);\r",
-							"});"
+							"});\r",
+							"\r",
+							"//retrieve order id from orders api\r",
+							"\r",
+							"pm.execution.setNextRequest(\"Remove Order\");"
 						],
 						"type": "text/javascript",
 						"packages": {}
@@ -387,7 +399,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"customerName\":\"new {{$randomLastName}}\"\r\n}",
+					"raw": "{\r\n    \"customerName\":\"new {{customerName}}\",\r\n    \"quantity\":{{quantity}}\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -414,7 +426,7 @@
 			"response": []
 		},
 		{
-			"name": "Remove order",
+			"name": "Remove Order",
 			"event": [
 				{
 					"listen": "test",
